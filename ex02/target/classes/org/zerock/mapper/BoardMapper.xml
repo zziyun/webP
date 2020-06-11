@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.BoardMapper">
+	<select id="getList" resultType="org.zerock.domain.BoardVO"> <!-- id가 method명과 같아야 함 -->
+		<![CDATA[
+			select * from tbl_board where bno > 0
+		]]>
+	</select>
+	
+	<insert id="insert">
+		insert into tbl_board (bno,title,content,writer) <!-- table의 컬럼 -->
+		values (seq_board.nextval, #{title}, #{content}, #{writer}) <!-- sequence객체의 다음값, #{title} 형식 기억 -->
+	</insert>
+	
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="bno" order="BEFORE"
+			resultType="long">
+			select seq_board.nextval from dual <!-- from dual 안붙이면 오류, dual은 실질적으로 아무 일도 안하는 테이블임/오라클에서 자동 셍성 -->
+		</selectKey>
+		insert into tbl_board (bno,title,content, writer)
+		values (#{bno}, #{title}, #{content}, #{writer})
+	</insert>
+	
+	<select id="read" resultType="org.zerock.domain.BoardVO">
+		select * from tbl_board where bno = #{bno}
+	</select>
+	
+	<delete id="delete">
+		delete tbl_board where bno = #{bno}
+	</delete>
+	
+	<update id="update">
+		update tbl_board
+		set 
+			title= #{title},
+			content=#{content},
+			writer = #{writer},
+			updateDate = sysdate
+		where bno = #{bno}
+	</update>
+</mapper>
